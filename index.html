@@ -517,7 +517,8 @@ let missCount = 0;
 let time = 60;
 let timerInterval;
 let isPlaying = false; 
-let isBgmPlaying = false; // 追加：BGMが鳴っているかどうかの判定
+let isFirstQuestion = false;
+let isBgmPlaying = false; // 追加：BGMが鳴っているかどうかの判定定
 
 const textFuriganaEl = document.getElementById("text-furigana");
 const textJpEl = document.getElementById("text-jp");
@@ -598,9 +599,18 @@ function newText() {
   if (availableTexts.length === 0) {
     availableTexts = [...texts];
   }
-  const index = Math.floor(Math.random() * availableTexts.length);
-  const rnd = availableTexts[index];
-  availableTexts.splice(index, 1);
+  
+  let rnd;
+  const today = new Date();
+  // 6月5日で、かつ1問目の場合のみ確定でこのお題を出す
+  if (isFirstQuestion && today.getMonth() === 5 && today.getDate() === 5) {
+    rnd = { jp: "山田社長お誕生日おめでとうございます", kana: "やまだしゃちょうおたんじょうびおめでとうございます" };
+  } else {
+    const index = Math.floor(Math.random() * availableTexts.length);
+    rnd = availableTexts[index];
+    availableTexts.splice(index, 1);
+  }
+  isFirstQuestion = false;
 
   currentFurigana = rnd.kana;
   currentJp = rnd.jp;
@@ -707,6 +717,7 @@ function startGame() {
   localStorage.setItem("savedPlayerName", nameInput.value.trim());
 
   isPlaying = true;
+  isFirstQuestion = true;
   score = 0;
   combo = 0;
   fatigue = 0;
