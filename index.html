@@ -286,7 +286,11 @@ const romajiMap = {
   'ぴゃ':['pya'], 'ぴゅ':['pyu'], 'ぴょ':['pyo'],
   'ふぁ':['fa'], 'ふぃ':['fi'], 'ふぇ':['fe'], 'ふぉ':['fo'],
   'てぃ':['thi'], 'でぃ':['dhi'],
-  'ー':['-']
+  'ー':['-'],
+  'ぁ':['xa', 'la'], 'ぃ':['xi', 'li'], 'ぅ':['xu', 'lu'], 'ぇ':['xe', 'le'], 'ぉ':['xo', 'lo'],
+  'ゃ':['xya', 'lya'], 'ゅ':['xyu', 'lyu'], 'ょ':['xyo', 'lyo'],
+  'っ':['xtu', 'xtsu', 'ltu', 'ltsu'],
+  'ゎ':['xwa', 'lwa']
 };
 
 function generateRomaji(kanaStr) {
@@ -295,62 +299,54 @@ function generateRomaji(kanaStr) {
   let token = kanaStr[0];
   let nextChar = kanaStr[1];
   
+  let allRes = [];
+
   let doubleToken = kanaStr.substr(0, 2);
   if (kanaStr.length >= 2 && romajiMap[doubleToken]) {
     let tails = generateRomaji(kanaStr.substring(2));
-    let res = [];
     for (let r of romajiMap[doubleToken]) {
-      for (let t of tails) res.push(r + t);
+      for (let t of tails) allRes.push(r + t);
     }
-    return res;
   }
   
   if (token === 'っ' && nextChar) {
-    let res = [];
     let tailsNormal = generateRomaji(kanaStr.substring(1));
     for (let t of tailsNormal) {
-      res.push('xtsu' + t);
-      res.push('ltu' + t);
-      res.push('xtu' + t);
+      allRes.push('xtsu' + t);
+      allRes.push('ltu' + t);
+      allRes.push('xtu' + t);
       
       let firstChar = t[0];
       if (firstChar && /[a-z]/.test(firstChar) && !/[aeiou]/.test(firstChar)) {
-        res.push(firstChar + t);
+        allRes.push(firstChar + t);
       }
     }
-    return [...new Set(res)];
-  }
-  
-  if (token === 'ん') {
-    let res = [];
+  } else if (token === 'ん') {
     let tails = generateRomaji(kanaStr.substring(1));
     for (let t of tails) {
-      res.push('nn' + t);
+      allRes.push('nn' + t);
       if (t.length > 0) {
         let firstChar = t[0];
         if (!/[aeiouyn]/.test(firstChar)) {
-          res.push('n' + t);
+          allRes.push('n' + t);
         }
       } else {
-        res.push('n' + t);
+        allRes.push('n' + t);
       }
     }
-    return [...new Set(res)];
-  }
-  
-  if (romajiMap[token]) {
+  } else if (romajiMap[token]) {
     let tails = generateRomaji(kanaStr.substring(1));
-    let res = [];
     for (let r of romajiMap[token]) {
-      for (let t of tails) res.push(r + t);
+      for (let t of tails) allRes.push(r + t);
     }
-    return res;
   }
   
-  let tails = generateRomaji(kanaStr.substring(1));
-  let res = [];
-  for (let t of tails) res.push(token + t);
-  return res;
+  if (allRes.length === 0) {
+    let tails = generateRomaji(kanaStr.substring(1));
+    for (let t of tails) allRes.push(token + t);
+  }
+  
+  return [...new Set(allRes)];
 }
 
 const texts = [
