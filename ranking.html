@@ -94,6 +94,7 @@ h2 {
     <tr>
       <th style="width: 100px; white-space: nowrap;">順位</th>
       <th>プレイヤー名</th>
+      <th style="width: 120px;">プレイ日</th>
       <th style="width: 100px;">スコア</th>
     </tr>
   </thead>
@@ -129,7 +130,7 @@ function renderRanking(data) {
   tbodyEl.innerHTML = "";
 
   if (sortedData.length === 0) {
-    tbodyEl.innerHTML = `<tr><td colspan="3" style="text-align:center;">まだ記録がありません</td></tr>`;
+    tbodyEl.innerHTML = `<tr><td colspan="4" style="text-align:center;">まだ記録がありません</td></tr>`;
     return;
   }
 
@@ -143,9 +144,13 @@ function renderRanking(data) {
     else if (rank === 2) { rankClass = "rank-2"; rankText = "🥈 2位"; }
     else if (rank === 3) { rankClass = "rank-3"; rankText = "🥉 3位"; }
 
+    // 時間部分をカットして日付のみ取得 (例: "2026/06/01 10:20" -> "2026/06/01")
+    const dateOnly = d.date ? d.date.split(' ')[0] : '';
+
     tr.innerHTML = `
       <td class="${rankClass}" style="text-align: center; white-space: nowrap;">${rankText}</td>
       <td>${d.name}</td>
+      <td style="text-align: center; font-size: 0.9em; color: #ccc;">${dateOnly}</td>
       <td class="score" style="text-align: right;">${d.score}</td>
     `;
     tbodyEl.appendChild(tr);
