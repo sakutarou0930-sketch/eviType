@@ -890,6 +890,15 @@ document.addEventListener("keydown", (e) => {
 
 // 最終更新日時の自動表示 (GitHub APIを使用)
 document.addEventListener("DOMContentLoaded", async () => {
+  // 6月5日限定でロゴ画像を切り替える処理
+  const today = new Date();
+  if (today.getMonth() === 5 && today.getDate() === 5) {
+    const gameLogo = document.getElementById("gameLogo");
+    if (gameLogo) {
+      gameLogo.src = "Logo_birthday.png";
+    }
+  }
+
   // URLのパラメータに ?reset=true がある場合は名前をリセット
   const urlParams = new URLSearchParams(window.location.search);
   if (urlParams.get('reset') === 'true') {
